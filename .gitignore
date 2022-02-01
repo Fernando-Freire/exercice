@@ -147,3 +147,4 @@ dmypy.json
 
 
 /training/*bow.csv
+/training/*tfidf.csv
