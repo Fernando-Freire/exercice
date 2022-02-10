@@ -40,4 +40,4 @@ USER ${USER_ID}:${GROUP_ID}
 EXPOSE ${API_PORT}
 
 # By default, execute Flask
-CMD flask run --host ${API_HOST} --port ${API_PORT}
+CMD uvicorn main:app --reload --host ${API_HOST} --port ${API_PORT}
