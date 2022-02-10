@@ -2,6 +2,7 @@ from typing import Optional
 import pickle
 import json
 import pandas as pd
+import os
 
 
 from fastapi import FastAPI
@@ -18,6 +19,8 @@ async def read_root():
 @app.post("/category")
 async def get_category(request: Request):
 
+    model = os.getenv("MODEL_PATH")
+
     try:
         prodct = json.loads(request.body)
     except ValueError:
@@ -32,7 +35,7 @@ async def get_category(request: Request):
         if t.get("title") is None:
             return await jsonify({"error": "missing products title field"})
 
-    with open("model.pkl", "rb") as f:
+    with open(model, "rb") as f:
         text_clf = pickle.load(f)
 
     df = pd.DataFrame(products_list)
