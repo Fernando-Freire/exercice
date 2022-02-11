@@ -14,7 +14,6 @@ class Products(BaseModel):
 
 app = FastAPI()
 
-
 @app.get("/")
 async def read_root():
     return {"Hello": "World"}
@@ -34,3 +33,5 @@ async def get_category(products: Products):
     df = df.fillna(" ")
     categories_list = text_clf.predict(df["text"])
     return  {"categories": categories_list.tolist()}
+
+

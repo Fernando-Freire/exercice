@@ -13,6 +13,16 @@ def test_read_root():
     assert response.json() == {"Hello":"World"}
 
 
-#def test_get_category():
-
-
+def test_get_category():
+    data_json = {
+            "products": [
+                {
+                    "title": "Cinto de Artes Marciais",
+                    "concatenated_tags": "cinto artes-marciais roupa tecido",
+                },
+                {"title": "Carrinho de Bebê"},
+            ]
+        }
+    response = client.post("/category", data_json)
+    assert response.status_code == 200
+    assert len(response.json["categories"]) == 2
