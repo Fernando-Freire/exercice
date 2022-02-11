@@ -1,11 +1,16 @@
 from typing import Optional
 import pickle
-import json
 import pandas as pd
 import os
-
-
+from pydantic import BaseModel
 from fastapi import FastAPI
+
+class Product(BaseModel):
+    title: str
+    concatenated_tags: str
+
+class Products(BaseModel):
+    products: list[Product]
 
 app = FastAPI()
 
@@ -17,23 +22,9 @@ async def read_root():
 
 # Post route for product categorization
 @app.post("/category")
-async def get_category(request: Request):
-
+async def get_category(products: Products):
     model = os.getenv("MODEL_PATH")
-
-    try:
-        prodct = json.loads(request.body)
-    except ValueError:
-        return await json.dumps({"status": 1, "info": "request failed."})
-
-    if prodct.get("products") is None:
-        return await jsonify({"error": "missing products field"})
-
-    products_list = prodct.get("products")
-
-    for t in products_list:
-        if t.get("title") is None:
-            return await jsonify({"error": "missing products title field"})
+    print(products)
 
     with open(model, "rb") as f:
         text_clf = pickle.load(f)
@@ -42,4 +33,4 @@ async def get_category(request: Request):
     df["text"] = df["concatenated_tags"] + " " + df["title"]
     df = df.fillna(" ")
     categories_list = text_clf.predict(df["text"])
-    return await jsonify({"categories": categories_list.tolist()})
+    return  {"categories": categories_list.tolist()}
