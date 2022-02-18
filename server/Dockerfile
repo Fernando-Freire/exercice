@@ -12,7 +12,9 @@ ENV API_HOST="0.0.0.0" \
     API_USER="flask" \
     API_DIR="/usr/src/api" \
     FLASK_ENV="development" \
-    FLASK_APP="api.py"
+    FLASK_APP="api.py" \
+    MLFLOW_TRACKING_URI="http://localhost:5000" \
+    MLFLOW_S3_ENDPOINT_URL="http://localhost:9000" 
 
 # Work directory inside container
 WORKDIR ${API_DIR}

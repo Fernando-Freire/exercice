@@ -14,3 +14,8 @@ services:
       - ".:/usr/src/api"
       - "../data:/usr/src/data"
     env_file: ".env"
+
+networks:
+  default:
+    name: mlflow
+    external: true

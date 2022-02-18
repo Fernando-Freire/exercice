@@ -7,11 +7,15 @@ ARG GROUP_ID=1000
 
 # Environment variables to configure JupyterLab
 ENV JUPYTER_HOST="0.0.0.0" \
-    JUPYTER_PORT="8888" \
-    JUPYTER_GROUP="jovyan" \
-    JUPYTER_USER="jovyan" \
-    JUPYTER_HOME_DIR="/home/jovyan" \
-    JUPYTER_NB_DIR="/usr/src/notebooks"
+  JUPYTER_PORT="8888" \
+  JUPYTER_GROUP="jovyan" \
+  JUPYTER_USER="jovyan" \
+  JUPYTER_HOME_DIR="/home/jovyan" \
+  JUPYTER_NB_DIR="/usr/src/notebooks" \
+  MLFLOW_TRACKING_URI="http://localhost:5000" \
+  MLFLOW_S3_ENDPOINT_URL="http://localhost:9000" \
+  MLFLOW_S3_IGNORE_TLS=true \
+  AWS_DEFAULT_REGION=sa
 
 # Work directory inside container
 WORKDIR ${JUPYTER_NB_DIR}
