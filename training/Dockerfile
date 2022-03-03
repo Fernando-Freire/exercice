@@ -47,4 +47,5 @@ USER ${USER_ID}:${GROUP_ID}
 EXPOSE ${JUPYTER_PORT}
 
 # By default, execute JupyterLab
+#CMD mlflow server --backend-store-uri mysql+pymysql://${MYSQL_USER}:${MYSQL_PASSWORD}@db:3306/${MYSQL_DATABASE} --default-artifact-root s3://mlflow/ --host 0.0.0.0 && \
 CMD jupyter notebook --ip ${JUPYTER_HOST} --port ${JUPYTER_PORT} --no-browser --notebook-dir ${JUPYTER_NB_DIR}

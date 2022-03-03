@@ -1,2 +1,3 @@
 curl
 libgomp1
+git
