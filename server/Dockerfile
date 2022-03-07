@@ -7,14 +7,14 @@ ARG GROUP_ID=1000
 
 # Environment variables to configure Flask
 ENV API_HOST="0.0.0.0" \
-    API_PORT="5000" \
-    API_GROUP="flask" \
-    API_USER="flask" \
-    API_DIR="/usr/src/api" \
-    FLASK_ENV="development" \
-    FLASK_APP="api.py" \
-    MLFLOW_TRACKING_URI="http://localhost:5000" \
-    MLFLOW_S3_ENDPOINT_URL="http://localhost:9000" 
+  API_PORT="5001" \
+  API_GROUP="flask" \
+  API_USER="flask" \
+  API_DIR="/usr/src/api" \
+  FLASK_ENV="development" \
+  FLASK_APP="api.py" \
+  MLFLOW_TRACKING_URI="http://localhost:5000" \
+  MLFLOW_S3_ENDPOINT_URL="http://localhost:9000" 
 
 # Work directory inside container
 WORKDIR ${API_DIR}
@@ -42,4 +42,4 @@ USER ${USER_ID}:${GROUP_ID}
 EXPOSE ${API_PORT}
 
 # By default, execute Flask
-CMD pytest && uvicorn api:app --reload --host ${API_HOST} --port ${API_PORT}
+CMD uvicorn api:app --reload --host ${API_HOST} --port ${API_PORT}
