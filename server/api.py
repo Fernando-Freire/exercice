@@ -1,8 +1,11 @@
 from typing import Optional
 
+import gensim
 import mlflow.pyfunc
 import nltk.stem
+from gensim import corpora
 from gensim.utils import simple_preprocess
+from mlflow.tracking import MlflowClient
 
 mlflow.set_tracking_uri("http://mlflow_server:5000")
 
@@ -21,8 +24,6 @@ class Products(BaseModel):
     products: list[Product]
 
 
-nltk.download("rslp")
-
 app = FastAPI()
 
 stemmer = nltk.stem.RSLPStemmer()
@@ -38,7 +39,7 @@ async def read_root():
 async def get_category(model_type: str, products: Products):
     implemented_model_types = ["tfidf", "bow", "Word2Vec", "Doc2Vec"]
     if model_type not in implemented_model_types:
-        raise HTTPException(status_code=404, detail="Model Type Not Impllemented")
+        raise HTTPException(status_code=404, detail="Model Type Not Implemented")
 
     ## Registered model names : "model_type"+"category"
     category_list = [
@@ -52,14 +53,11 @@ async def get_category(model_type: str, products: Products):
 
     model_name_prefix = model_type + "-DecisionTreeClass-"
 
-    print(products.dict()["products"])
     text = []
     title = []
     for item in products.dict()["products"]:
         text.append(item["title"] + " " + item["concatenated_tags"])
         title.append(item["title"])
-
-    print(text)
 
     df = pd.DataFrame(text, columns=["text"])
 
@@ -69,13 +67,33 @@ async def get_category(model_type: str, products: Products):
     ]
 
     product_category = pd.DataFrame(title, columns=["Product"])
+    product_category.set_index("Product")
     for category in category_list:
         model_name = model_name_prefix + category
-        print("model_name is " + model_name)
         model = mlflow.pyfunc.load_model(model_uri=f"models:/{model_name}/Production")
+        name_file = "my_dict_" + model_type + ".txt"
+        dict = MlflowClient().download_artifacts(model.metadata.run_id, name_file)
+        mydict = corpora.Dictionary.load_from_text(dict)
+        test_features = []
+        for index, row in df.iterrows():
+            # Converting the tokens into the formet that the model requires
+            features = gensim.matutils.corpus2csc(
+                [mydict.doc2bow(row["stemmed_tokens"])], num_terms=len(mydict)
+            ).toarray()[:, 0]
+            test_features.append(features)
 
-        result = model.predict(df)
+        result = model.predict(test_features)
 
-        product_category[category] = [x == 1 for x in result]
+        # product_category[category] = [x == 1 for x in result]
+        product_category[category] = result
 
-    return {"categories": product_category}
+    print(product_category)
+    response = []
+    for index, row in product_category.iterrows():
+        categories_of_product = []
+        product_name = row[0]
+        for i in range(1, 7):
+            if row[i] == 1:
+                categories_of_product.append(product_category.columns[i])
+        response.append({product_name: categories_of_product})
+    return {"categories": response}

@@ -151,3 +151,9 @@ dmypy.json
 /training/*.model
 /training/*word2vec.csv
 /training/*doc2vec.csv
+
+/training/*bow.txt
+/training/*tfidf.txt
+/training/*.model
+/training/*Word2Vec.txt
+/training/*Doc2Vec.txt

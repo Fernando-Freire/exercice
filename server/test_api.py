@@ -32,11 +32,27 @@ def test_get_category_wrong_fields():
         ]
     }
     response = client.post("/category/bow", data_json)
-    assert response.status_code == 422
+    assert response.status_code == 404
     # assert len(response.json()["categories"]) == 2
 
 
-def test_get_category():
+def test_get_category_bow():
+    __test_get_category("bow")
+
+
+def test_get_category_tfidf():
+    __test_get_category("tfidf")
+
+
+def test_get_category_Word2Vec():
+    __test_get_category("Word2Vec")
+
+
+def test_get_category_Doc2Vec():
+    __test_get_category("Doc2Vec")
+
+
+def __test_get_category(model: str):
     data_json = {
         "products": [
             {
@@ -49,6 +65,9 @@ def test_get_category():
             },
         ]
     }
-    response = client.post("/category/bow", data_json)
+    response = client.post("/category/{model}", data_json)
     assert response.status_code == 200
-    # assert len(response.json()["categories"]) == 2
+    categories = response.json()["categories"]
+    assert len(categories) == 2
+    assert categories[0] == {"Cinto de Artes Marciais": []}
+    assert categories[1] == {"Quadro de plantas Tropicais": ["Decoração"]}

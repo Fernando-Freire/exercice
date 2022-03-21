@@ -35,6 +35,8 @@ RUN groupadd -g ${GROUP_ID} ${API_GROUP} \
   && useradd -u ${USER_ID} -g ${API_GROUP} ${API_USER} \
   && chown ${USER_ID}:${GROUP_ID} ${API_DIR}
 
+RUN python -m nltk.downloader -d /usr/local/share/nltk_data rslp
+
 # Set non-root user flask to run Flask
 USER ${USER_ID}:${GROUP_ID}
 
